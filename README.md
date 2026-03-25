@@ -1,32 +1,158 @@
-# Content Repurposing Pipeline — Detailed Brief
+# 📚 Content Pipeline
 
-## What This Is
+> **One book → 50-100+ pieces of marketing content.** Turn your entire book catalog into a compounding organic discovery engine across every major platform.
 
-A system that takes any book manuscript and automatically generates a full content calendar with ready-to-post assets across every platform. One book becomes 50-100+ pieces of content. Your 60 titles become 3,000-6,000 pieces of marketing content — an organic discovery engine that compounds forever.
-
----
-
-## The Problem
-
-Each of your 60 books contains gold — funny quotes, relatable observations, useful content — that dies the moment someone finishes reading. None of it gets repurposed. You publish a book, run Amazon ads, and that's it.
-
-Meanwhile, one creator (@lyndseydotw) reads excerpts from gag gift books on TikTok and gets 697K likes per video. The content already exists in your books. It just needs to be extracted, formatted for each platform, and posted.
-
-You don't have time to do this manually. But a pipeline can.
+A system that takes any book manuscript and automatically generates a full content calendar with ready-to-post assets across TikTok, Instagram, Pinterest, Facebook, blog, and email. 60 titles become 3,000–6,000 pieces of marketing content — posted over months or years.
 
 ---
 
-## The Pipeline
+## 🧩 How It Works
 
-### Input
+```
+Manuscript (Word/Text/PDF)
+        │
+        ▼
+┌─────────────────────────┐
+│  Stage 1: Extraction    │  LLM reads the book → extracts quotes,
+│  (Content Atoms)        │  scenes, sample pages, facts
+└──────────┬──────────────┘
+           │
+           ▼
+┌─────────────────────────┐
+│  Stage 2: Formatting    │  Each atom → platform-specific formats
+│  (Per-Platform)         │  (video scripts, quote cards, pins, ads)
+└──────────┬──────────────┘
+           │
+           ▼
+┌─────────────────────────┐
+│  Stage 3: Asset Gen     │  HTML templates + Puppeteer screenshots
+│  (Images, Scripts)      │  for quote cards, pins, mockups
+└──────────┬──────────────┘
+           │
+           ▼
+┌─────────────────────────┐
+│  Stage 4: Calendar      │  Distributes content across platforms
+│  (Posting Schedule)     │  following cadence rules
+└──────────┬──────────────┘
+           │
+           ▼
+┌─────────────────────────┐
+│  Stage 5: Output        │  Structured folders + Supabase sync
+│  (Files + Dashboard)    │  for Mission Control dashboard
+└─────────────────────────┘
+```
 
-A book manuscript (Word doc, Google Doc, plain text, or PDF). The system accepts it and runs the following stages:
+---
 
-### Stage 1: Content Extraction (LLM)
+## 🚀 Quick Start
 
-The LLM reads the manuscript and extracts every piece of reusable content:
+### Prerequisites
 
-**For humor/gift books ("Things I Want to Say at Work"):**
+- **Node.js** ≥ 18
+- **pnpm** (or npm/yarn)
+- API key for an LLM provider (Kimi K2.5 recommended for 262K context)
+- *(Optional)* Supabase project for dashboard storage
+
+### Installation
+
+```bash
+git clone https://github.com/your-org/content-pipeline.git
+cd content-pipeline
+pnpm install
+```
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# LLM Provider
+LLM_API_KEY=your-api-key
+LLM_MODEL=kimi-k2.5          # Or any OpenAI-compatible model
+LLM_BASE_URL=https://api.moonshot.cn/v1
+
+# Supabase (optional — for dashboard sync)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Usage
+
+```bash
+# 1. Place your manuscript in the input folder
+cp manuscript.txt input/things-i-want-to-say-at-work.txt
+
+# 2. Run the pipeline
+node scripts/generate-content.mjs --book things-i-want-to-say-at-work
+
+# 3. Review the output
+ls output/things-i-want-to-say-at-work/
+```
+
+---
+
+## 📂 Project Structure
+
+```
+content-pipeline/
+├── input/                          # Drop manuscripts here
+│   └── {book-slug}.txt
+├── scripts/
+│   └── generate-content.mjs        # Main pipeline entry point
+├── src/
+│   ├── extract/                     # Stage 1 — Content atom extraction
+│   │   └── extractor.mjs
+│   ├── format/                      # Stage 2 — Platform-specific formatters
+│   │   ├── tiktok.mjs
+│   │   ├── instagram.mjs
+│   │   ├── pinterest.mjs
+│   │   ├── facebook.mjs
+│   │   ├── blog.mjs
+│   │   └── email.mjs
+│   ├── generate/                    # Stage 3 — Asset generation
+│   │   ├── quote-card.mjs
+│   │   ├── pin-image.mjs
+│   │   └── book-mockup.mjs
+│   ├── calendar/                    # Stage 4 — Calendar scheduling
+│   │   └── scheduler.mjs
+│   └── output/                      # Stage 5 — File output + Supabase sync
+│       ├── writer.mjs
+│       └── supabase.mjs
+├── templates/                       # HTML templates for image generation
+│   ├── quote-card.html
+│   └── pinterest-pin.html
+├── output/                          # Generated content (git-ignored)
+│   └── {book-slug}/
+│       ├── content-atoms.json
+│       ├── calendar.json
+│       ├── tiktok/
+│       ├── instagram/
+│       ├── pinterest/
+│       ├── facebook/
+│       ├── blog/
+│       └── email/
+├── .env                             # API keys (git-ignored)
+├── .gitignore
+├── package.json
+└── README.md
+```
+
+---
+
+## 📋 Pipeline Stages in Detail
+
+### Stage 1: Content Extraction
+
+The LLM reads the full manuscript and extracts every reusable **content atom** — the smallest unit of standalone content.
+
+| Book Type | Atom Examples | Typical Count |
+|-----------|---------------|---------------|
+| Humor / Gift books | Quotes, one-liners, observations | 50–100 |
+| Children's books | Funny scenes, character moments | 30–60 |
+| Activity books | Sample puzzles, page descriptions | 20–40 |
+
+Each atom is tagged with metadata:
+
 ```json
 {
   "type": "quote",
@@ -38,186 +164,50 @@ The LLM reads the manuscript and extracts every piece of reusable content:
 }
 ```
 
-**For children's books:**
-```json
-{
-  "type": "scene",
-  "text": "The dinosaur let out the biggest fart the kingdom had ever heard. Trees shook. Birds flew. The princess laughed so hard milk came out her nose.",
-  "tags": ["kids humor", "fart joke", "dinosaur"],
-  "platforms": ["tiktok", "instagram_reels"],
-  "viral_potential": 9
-}
-```
+### Stage 2: Platform Formatting
 
-**For activity books:**
-```json
-{
-  "type": "sample_page",
-  "description": "Word search puzzle — 'Things You Find in an Office'",
-  "tags": ["activity book", "word search", "office"],
-  "platforms": ["pinterest", "instagram", "facebook"],
-  "viral_potential": 5
-}
-```
+Each content atom is transformed into ready-to-use formats for each platform:
 
-Output: A JSON array of 30-100+ content atoms per book.
-
-### Stage 2: Platform-Specific Formatting (LLM + Templates)
-
-Each content atom gets transformed into platform-ready formats:
-
-**TikTok / Instagram Reels / YouTube Shorts (vertical video scripts):**
-```
-HOOK (first 1.5s): Text on screen: "Things I actually say in meetings"
-BODY (10-20s): 
-  - Show book cover
-  - Read 3-4 quotes with reactions
-  - Quick cuts between each
-CLOSE (3s): "Link in bio. Your coworkers need this."
-AUDIO: Trending sound or original voiceover
-HASHTAGS: #officetok #workmemes #corporatehumor #booktok #gaggift
-```
-
-**Instagram / Facebook (static post):**
-```
-IMAGE: Quote card — bold text on brand-colored background
-  "I'm not arguing, I'm just explaining why I'm right."
-  — Things I Want to Say at Work But Can't
-CAPTION: Tag your coworker who says this in every meeting 😤
-  .
-  .
-  .
-  📚 Link in bio
-HASHTAGS: #officehumor #worklife #coworkermemes #funnygifts
-```
-
-**Pinterest (pin):**
-```
-IMAGE: Vertical pin (1000x1500)
-  Book cover + "Perfect gift for your office bestie"
-  Clean, pinnable design
-TITLE: "Funny Office Gift Under $15 — Things I Want to Say at Work"
-DESCRIPTION: The perfect white elephant gift, coworker birthday gift, 
-  or just-because gift for anyone surviving corporate life. 
-  Funny quotes about meetings, emails, Monday mornings, and that 
-  one coworker we all have.
-BOARD: Office Gift Ideas / Funny Books / White Elephant Gifts
-LINK: Amazon listing URL
-```
-
-**Facebook Ad Creative (for FB Ad Generator integration):**
-```
-PRIMARY TEXT: "Finally, a book that says what we're all thinking at work."
-HEADLINE: Things I Want to Say at Work But Can't
-DESCRIPTION: The #1 office humor gift on Amazon. 4.8 stars.
-IMAGE/VIDEO: [Generated by FB Ad Generator pipeline]
-CTA: Shop Now → Amazon listing
-AUDIENCE ANGLE: office_humor (from customer_profiles.py)
-```
-
-**Blog Post / SEO (for potential Shopify store or landing page):**
-```
-TITLE: "25 Things Everyone Wants to Say at Work (But Can't)"
-META: Funny office quotes from the bestselling Amazon humor book...
-BODY: Listicle format — 25 quotes from the book, each with 
-  a 2-sentence setup. Keyword-optimized for "funny office gifts",
-  "coworker gift ideas", "office humor books"
-CTA: Buy on Amazon (affiliate link)
-WORD COUNT: ~1200 words
-```
-
-**Email Sequence (for future email list):**
-```
-Email 1 (Welcome): "Here's a free sample of the book that's 
-  making offices everywhere slightly more bearable"
-  → 5 best quotes
-Email 2 (Day 3): "Your coworkers will thank you (or fire you)"
-  → Gift angle push
-Email 3 (Day 7): "New this month: [next book in series]"
-  → Cross-sell
-```
+| Platform | Format | Output |
+|----------|--------|--------|
+| **TikTok** / Reels / Shorts | Vertical video script | Hook → body → CTA with timing + audio notes |
+| **Instagram** | Quote card + carousel | Image files + caption + hashtags |
+| **Pinterest** | Vertical pin | 1000×1500 image + SEO title/description + board |
+| **Facebook** | Organic post + ad creative | Image + copy + targeting notes |
+| **Blog** | SEO listicle | ~1,200 word post, keyword-optimized |
+| **Email** | Welcome sequence | 3-email drip campaign per book |
 
 ### Stage 3: Asset Generation
 
-For each platform format, generate the actual assets:
-
-**Images:**
-- Quote cards → Generated via HTML template + screenshot (Puppeteer) or Canvas API
-- Pinterest pins → Same approach, vertical format
-- Book mockup images → 3D book cover mockup overlaid on lifestyle backgrounds
-
-**Video Scripts:**
-- Full scripts with timing, text overlays, and audio notes
-- Ready to paste into Creatomate, CapCut, or Remotion for automated video generation
-- Or ready for Rui to film talking-head versions
-
-**Copy:**
-- All captions, hashtags, descriptions, blog posts output as plain text
-- Formatted per platform's best practices (character limits, hashtag counts, etc.)
+- **Quote cards** — HTML template → Puppeteer screenshot (Instagram/Facebook)
+- **Pinterest pins** — Vertical HTML template → screenshot
+- **Book mockups** — 3D cover on lifestyle backgrounds
+- **Video scripts** — Plain text, ready for Creatomate / CapCut / Remotion
+- **Copy** — Captions, hashtags, descriptions formatted per platform limits
 
 ### Stage 4: Content Calendar
 
-All generated assets organized into a posting schedule:
+Content is distributed across platforms following these cadence rules:
 
-```json
-{
-  "week_1": {
-    "monday": {
-      "tiktok": { "type": "video", "script": "...", "hashtags": "..." },
-      "instagram": { "type": "carousel", "images": [...], "caption": "..." },
-      "pinterest": { "type": "pin", "image": "...", "title": "..." }
-    },
-    "tuesday": {
-      "tiktok": { "type": "video", "script": "..." },
-      "facebook": { "type": "ad_creative", "copy": "...", "image": "..." }
-    }
-  }
-}
-```
+| Platform | Frequency | Days |
+|----------|-----------|------|
+| TikTok | 1/day | Daily |
+| Instagram | 4/week | Mon, Wed, Fri, Sun |
+| Pinterest | 3/week | Tue, Thu, Sat |
+| Facebook | 2/week | Wed, Sat |
+| Blog | 1/week | — |
 
-Rules:
-- Never post the same content atom on two platforms the same day
-- TikTok: 1/day (daily)
-- Instagram: 4/week (Mon, Wed, Fri, Sun)
-- Pinterest: 3/week (Tue, Thu, Sat)
-- Facebook: 2/week (Wed, Sat — organic page posts, separate from ads)
-- Blog: 1/week
-- **One book generates 3-4 months of content at this cadence**
+> **Rule:** The same content atom is never posted on two platforms on the same day.
+>
+> **Result:** One book generates **3–4 months** of content at this cadence.
 
 ### Stage 5: Output
 
-Everything saved to a structured folder:
+All content is saved to structured local folders and optionally synced to Supabase for the Mission Control dashboard.
 
-```
-output/{book-slug}/
-  content-atoms.json          — All extracted content
-  calendar.json               — Full posting schedule
-  tiktok/
-    week-01-mon.md            — Video script + notes
-    week-01-wed.md
-    ...
-  instagram/
-    week-01-mon-carousel/     — Image files + caption.txt
-    week-01-wed-quote/
-    ...
-  pinterest/
-    pin-01.png + pin-01.txt   — Pin image + title/description
-    pin-02.png + pin-02.txt
-    ...
-  facebook/
-    ad-creative-01/           — Image + copy + targeting notes
-    organic-post-01/          — Image + caption
-    ...
-  blog/
-    post-01.md                — Full SEO blog post
-    post-02.md
-    ...
-  email/
-    welcome-sequence/         — 3-email sequence
-    ...
-```
+---
 
-And synced to Supabase for a Mission Control dashboard view:
+## 🗄️ Database Schema (Supabase)
 
 ```sql
 CREATE TABLE content_atoms (
@@ -230,112 +220,93 @@ CREATE TABLE content_atoms (
   tone text,
   viral_potential integer,           -- 1-10
   platforms text[] DEFAULT '{}',
-  used_count integer DEFAULT 0,      -- How many times it's been posted
+  used_count integer DEFAULT 0,
   created_at timestamptz DEFAULT now()
 );
 
 CREATE TABLE content_calendar (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   atom_id uuid REFERENCES content_atoms(id),
-  platform text NOT NULL,            -- tiktok, instagram, pinterest, facebook, blog, email
-  format text NOT NULL,              -- video_script, quote_card, carousel, pin, ad_creative, blog_post
+  platform text NOT NULL,            -- tiktok, instagram, pinterest, etc.
+  format text NOT NULL,              -- video_script, quote_card, carousel, etc.
   scheduled_date date,
   caption text,
   hashtags text,
-  asset_paths text[],               -- Local file paths to generated assets
+  asset_paths text[],
   status text DEFAULT 'draft',       -- draft, scheduled, posted, skipped
-  performance jsonb,                 -- Views, likes, clicks (filled in post-posting)
+  performance jsonb,                 -- Views, likes, clicks (post-posting)
   created_at timestamptz DEFAULT now()
 );
 ```
 
 ---
 
-## Tech Stack
+## 💰 Cost Estimate
 
-- **Content extraction:** Kimi K2.5 (262K context — can read entire manuscripts)
-- **Image generation:** HTML templates + Puppeteer screenshot (quote cards, pins)
-- **Video scripts:** LLM output (text files ready for Creatomate/CapCut)
-- **Calendar logic:** Node.js script
-- **Storage:** Supabase + local filesystem
-- **Dashboard:** Mission Control `/content` page
-
----
-
-## How It Works in Practice
-
-**Initial setup (one time per book):**
-1. Upload manuscript to `~/clawd/content-pipeline/input/{book-slug}.txt`
-2. Run: `node ~/clawd/scripts/generate-content.mjs --book {book-slug}`
-3. Script reads manuscript → extracts atoms → generates all platform formats → creates calendar → saves everything
-4. Review output, approve/edit, schedule
-
-**Ongoing:**
-- Samantha (me) can run the pipeline proactively on any of your 60 titles
-- Posts flagged "ready" in the calendar get pushed to posting tools (Buffer, Later, or manual)
-- Performance data fed back → LLM learns which content types and hooks work best
-- Re-run quarterly to generate fresh content from same manuscript with new formats/hooks
+| Resource | Per Book | All 60 Books |
+|----------|----------|--------------|
+| LLM — extraction | ~$0.50 | ~$30 |
+| LLM — formatting | ~$1.00 | ~$60 |
+| Image gen (Puppeteer) | Free | Free |
+| **Total** | **~$1.50** | **~$90** |
 
 ---
 
-## Priority Order (which books to pipeline first)
-
-1. **"Things I Want to Say at Work But Can't"** — Best seller, highest content density, proven humor format
-2. **Children's humor books** — High viral potential on TikTok (the @lyndseydotw effect)
-3. **Activity books** — Pinterest-heavy (sample pages as pins drive discovery)
-4. **All remaining titles** — Batch process the full catalog
-
----
-
-## Estimated Output
+## 📊 Expected Output
 
 | Metric | Per Book | 60 Books |
 |--------|----------|----------|
-| Content atoms extracted | 50-100 | 3,000-6,000 |
-| TikTok video scripts | 30-50 | 1,800-3,000 |
-| Instagram posts | 20-30 | 1,200-1,800 |
-| Pinterest pins | 15-25 | 900-1,500 |
-| Facebook posts/ads | 10-15 | 600-900 |
-| Blog posts | 4-8 | 240-480 |
+| Content atoms | 50–100 | 3,000–6,000 |
+| TikTok scripts | 30–50 | 1,800–3,000 |
+| Instagram posts | 20–30 | 1,200–1,800 |
+| Pinterest pins | 15–25 | 900–1,500 |
+| Facebook posts | 10–15 | 600–900 |
+| Blog posts | 4–8 | 240–480 |
 | Email sequences | 1 (3 emails) | 60 (180 emails) |
-| **Content calendar duration** | **3-4 months** | **Years** |
+| **Calendar duration** | **3–4 months** | **Years** |
 
 ---
 
-## Cost Estimate
+## 🛠️ Tech Stack
 
-| Resource | Per Book | 60 Books (one-time) |
-|----------|----------|-------------------|
-| LLM (content extraction) | ~$0.50 | ~$30 |
-| LLM (platform formatting) | ~$1.00 | ~$60 |
-| Image generation (Puppeteer) | Free (local) | Free |
-| **Total** | **~$1.50/book** | **~$90 total** |
-
-$90 to turn your entire catalog into 3,000+ pieces of marketing content.
-
----
-
-## Build Order
-
-1. **Content extraction script** — Reads manuscript, outputs content atoms JSON
-2. **Platform formatters** — Transform atoms into platform-specific formats
-3. **Quote card generator** — HTML template + Puppeteer for Instagram/Pinterest images
-4. **Calendar generator** — Distributes content across platforms and dates
-5. **Supabase tables + push script** — Store atoms and calendar
-6. **Mission Control /content page** — Browse calendar, view assets, mark as posted
-7. **Test on "Things I Want to Say at Work"** — Full pipeline end-to-end
-8. **Batch run on remaining 59 titles**
-
-**Estimated build time:** 2-3 days with a coding agent. The LLM extraction is the core — everything else is templating and file generation.
+| Component | Technology |
+|-----------|------------|
+| Content extraction | Kimi K2.5 (262K context window) |
+| Image generation | HTML templates + Puppeteer |
+| Video scripts | LLM text output |
+| Calendar logic | Node.js |
+| Storage | Supabase + local filesystem |
+| Dashboard | Mission Control `/content` page |
 
 ---
 
-## Future Enhancements
+## 🏗️ Build Roadmap
 
-- **Auto-posting** — Connect to Buffer/Later API to schedule posts directly
-- **Performance tracking** — Pull engagement data back from platforms, feed into content optimization
-- **A/B content testing** — Generate 2 versions of each post, test which performs better
-- **Trending audio matching** — For TikTok, suggest trending sounds that match the content tone
-- **Integration with Ada** — Ada's ad pattern library informs which hooks/formats to prioritize
-- **Seasonal calendar** — Auto-ramp content for Q4 gifting season, Mother's Day, Father's Day, back-to-school
-- **Video generation** — Connect to Creatomate API to auto-generate actual videos from scripts (not just scripts)
+| # | Milestone | Description |
+|---|-----------|-------------|
+| 1 | Content extraction | Script to read manuscripts and output `content-atoms.json` |
+| 2 | Platform formatters | Transform atoms into per-platform formats |
+| 3 | Quote card generator | HTML + Puppeteer for Instagram/Pinterest images |
+| 4 | Calendar generator | Distribute content across platforms and dates |
+| 5 | Supabase sync | Store atoms + calendar in database |
+| 6 | Mission Control page | Browse calendar, view assets, mark as posted |
+| 7 | End-to-end test | Full pipeline on *"Things I Want to Say at Work"* |
+| 8 | Batch run | Process remaining 59 titles |
+
+---
+
+## 🔮 Future Enhancements
+
+- **Auto-posting** — Buffer / Later API integration for scheduled publishing
+- **Performance tracking** — Pull engagement metrics back from platforms
+- **A/B testing** — Generate 2 versions of each post, measure performance
+- **Trending audio** — Suggest trending TikTok sounds matching content tone
+- **Seasonal calendar** — Auto-ramp for Q4 gifting, Mother's Day, Father's Day
+- **Video generation** — Creatomate API for fully automated video creation
+- **Ada integration** — Ad pattern library informs hooks and format priorities
+
+---
+
+## 📄 License
+
+Private / Internal Use Only.
