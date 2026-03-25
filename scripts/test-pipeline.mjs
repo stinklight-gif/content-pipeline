@@ -4,10 +4,10 @@
  * No LLM API key needed.
  */
 
-import { generateQuoteCard } from '../src/generate/quote-card.mjs';
-import { generatePinImage } from '../src/generate/pin-image.mjs';
-import { generateCalendar } from '../src/calendar/scheduler.mjs';
-import { writeOutput } from '../src/output/writer.mjs';
+import { generateQuoteCard } from '../lib/pipeline/generate/quote-card.mjs';
+import { generatePinImage } from '../lib/pipeline/generate/pin-image.mjs';
+import { generateCalendar } from '../lib/pipeline/calendar/scheduler.mjs';
+import { writeOutput } from '../lib/pipeline/output/writer.mjs';
 import fs from 'fs/promises';
 import path from 'path';
 

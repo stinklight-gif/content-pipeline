@@ -3,7 +3,10 @@ node_modules/
 .venv/
 .env
 .env.local
+.env.production.local
 /output/
 input/
 .DS_Store
 .vercel
+*.tsbuildinfo
+next-env.d.ts

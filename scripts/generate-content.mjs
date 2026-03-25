@@ -15,11 +15,11 @@ import { program } from 'commander';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
-import { extractContentAtoms } from '../src/extract/extractor.mjs';
-import { formatAllPlatforms } from '../src/format/index.mjs';
-import { generateAllAssets } from '../src/generate/index.mjs';
-import { generateCalendar } from '../src/calendar/scheduler.mjs';
-import { writeOutput } from '../src/output/writer.mjs';
+import { extractContentAtoms } from '../lib/pipeline/extract/extractor.mjs';
+import { formatAllPlatforms } from '../lib/pipeline/format/index.mjs';
+import { generateAllAssets } from '../lib/pipeline/generate/index.mjs';
+import { generateCalendar } from '../lib/pipeline/calendar/scheduler.mjs';
+import { writeOutput } from '../lib/pipeline/output/writer.mjs';
 
 dotenv.config();
 
