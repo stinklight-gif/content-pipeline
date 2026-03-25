@@ -3,7 +3,7 @@ node_modules/
 .venv/
 .env
 .env.local
-output/
+/output/
 input/
 .DS_Store
 .vercel

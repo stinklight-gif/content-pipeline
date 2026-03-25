@@ -13,7 +13,7 @@ const client = new OpenAI({
   baseURL: process.env.LLM_BASE_URL || 'https://api.moonshot.ai/v1',
 });
 
-const DEFAULT_MODEL = process.env.LLM_MODEL || 'moonshot-v1-auto';
+const DEFAULT_MODEL = process.env.LLM_MODEL || 'kimi-k2.5';
 
 /**
  * Send a chat completion request to the LLM.
