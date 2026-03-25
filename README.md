@@ -98,7 +98,8 @@ content-pipeline/
 ├── input/                          # Drop manuscripts here
 │   └── {book-slug}.txt
 ├── scripts/
-│   └── generate-content.mjs        # Main pipeline entry point
+│   ├── generate-content.mjs        # Main pipeline entry point
+│   └── test-pipeline.mjs           # Test image gen + calendar (no API key needed)
 ├── src/
 │   ├── extract/                     # Stage 1 — Content atom extraction
 │   │   └── extractor.mjs
@@ -179,8 +180,8 @@ Each content atom is transformed into ready-to-use formats for each platform:
 
 ### Stage 3: Asset Generation
 
-- **Quote cards** — HTML template → Puppeteer screenshot (Instagram/Facebook)
-- **Pinterest pins** — Vertical HTML template → screenshot
+- **Quote cards** — @vercel/og (Satori) → PNG (Instagram/Facebook)
+- **Pinterest pins** — @vercel/og (Satori) → vertical PNG
 - **Book mockups** — 3D cover on lifestyle backgrounds
 - **Video scripts** — Plain text, ready for Creatomate / CapCut / Remotion
 - **Copy** — Captions, hashtags, descriptions formatted per platform limits
@@ -272,7 +273,7 @@ CREATE TABLE content_calendar (
 | Component | Technology |
 |-----------|------------|
 | Content extraction | Kimi K2.5 (262K context window) |
-| Image generation | HTML templates + Puppeteer |
+| Image generation | @vercel/og (Satori) + sharp |
 | Video scripts | LLM text output |
 | Calendar logic | Node.js |
 | Storage | Supabase + local filesystem |
@@ -286,7 +287,7 @@ CREATE TABLE content_calendar (
 |---|-----------|-------------|
 | 1 | Content extraction | Script to read manuscripts and output `content-atoms.json` |
 | 2 | Platform formatters | Transform atoms into per-platform formats |
-| 3 | Quote card generator | HTML + Puppeteer for Instagram/Pinterest images |
+| 3 | Quote card generator | @vercel/og (Satori) for Instagram/Pinterest images |
 | 4 | Calendar generator | Distribute content across platforms and dates |
 | 5 | Supabase sync | Store atoms + calendar in database |
 | 6 | Mission Control page | Browse calendar, view assets, mark as posted |

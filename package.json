@@ -1,0 +1,20 @@
+{
+  "name": "content-pipeline",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Turn book manuscripts into multi-platform marketing content",
+  "scripts": {
+    "generate": "node scripts/generate-content.mjs",
+    "extract": "node scripts/generate-content.mjs --stage extract",
+    "format": "node scripts/generate-content.mjs --stage format",
+    "images": "node scripts/generate-content.mjs --stage images",
+    "calendar": "node scripts/generate-content.mjs --stage calendar"
+  },
+  "dependencies": {
+    "@vercel/og": "^0.6.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.0",
+    "openai": "^4.70.0",
+    "sharp": "^0.33.0"
+  }
+}
